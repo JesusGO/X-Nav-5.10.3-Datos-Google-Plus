@@ -25,13 +25,16 @@
   <body>
     <!--Add a button for the user to click to initiate auth sequence -->
     <button id="authorize-button" style="visibility: hidden">Authorize</button>
+
+
+
     <script type="text/javascript">
       // Enter the API key from the Google Develoepr Console - to handle any unauthenticated
       // requests in the code.
       // The provided key works for this sample only when run from
       // https://google-api-javascript-client.googlecode.com/hg/samples/authSample.html
       // To use in your own application, replace this API key with your own.
-      var apiKey = '';
+      var apiKey = 'AIzaSyCieB0v0nZS_6AJqFoscjpV2ioqxG_GPAY';
 
       // Use a button to handle authentication the first time.
       function handleClientLoad() {
@@ -42,10 +45,9 @@
       // Load the API and make an API call.  Display the results on the screen.
       function makeApiCall() {
         gapi.client.load('plus', 'v1', function() {
+
           var request = gapi.client.plus.people.get({
-            'userId': ''
-            // For instance: 
-            // 'userId': '+GregorioRobles'
+            'userId': '108086881826934773478',
           });
           request.execute(function(resp) {
             var heading = document.createElement('h4');
@@ -53,14 +55,58 @@
             image.src = resp.image.url;
             heading.appendChild(image);
             heading.appendChild(document.createTextNode(resp.displayName));
-
             document.getElementById('content').appendChild(heading);
           });
+
+          var request02= gapi.client.plus.activities.list({
+            'userId': '108086881826934773478',
+            'collection': 'public'
+          });
+          request02.execute(function(resp) {
+
+            for (var i=0; i<resp.items.length; i++){
+              if(resp.items[i].location != null){
+                var place = document.createElement('h3');
+                var lat =document.createElement('h5');
+                var lon =document.createElement('h5');
+
+                place.innerHTML=resp.items[i].location.displayName;
+
+                lat.innerHTML = resp.items[i].location.position.latitude;
+                lon.innerHTML = resp.items[i].location.position.longitude;
+                document.getElementById('list').appendChild(place);
+                document.getElementById('list').appendChild(lat);
+                document.getElementById('list').appendChild(lon);
+              }
+
+              /*if(resp.items[i].location != null){
+                var place = resp.items[i].location.displayName;
+                var lat = resp.items[i].location.position.latitude;
+                var lon = resp.items[i].location.position.longitude;
+                var heading = document.createElement('h2');
+                var coordLa = document.createElement('p');
+                var coordLo = document.createElement('p');
+                heading.appendChild(document.createTextNode(place));
+                coordLa.appendChild(document.createTextNode("latitud: " + lat));
+                coordLo.appendChild(document.createTextNode("longitud: " + lon));
+                document.getElementById('locations').appendChild(heading);
+                document.getElementById('locations').appendChild(coordLa);
+                document.getElementById('locations').appendChild(coordLo);
+              }*/
+            }
+          });
         });
+
+
+
+
       }
     </script>
     <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
     <div id="content"></div>
     <p>Retrieves your profile name (and picture) using the Google Plus API.</p>
+    <div id="list" class="list">
+
+    </div>
   </body>
 </html>
